@@ -203,25 +203,25 @@ async def generate_study_material(request: GenerationRequest):
         prompt = STUDY_GENERATION_PROMPT.format(topic=topic)
         
         # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",  # Using 3.5-turbo for cost-effectiveness
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an expert educational content creator. Always respond with valid JSON only."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.7,
-            max_tokens=2000,
-            response_format={"type": "json_object"}
-        )
-        
-        # Extract and parse the response
-        response_text = response.choices[0].message.content
+        from openai import OpenAI
+
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-4.1-mini",
+    input=[
+        {
+            "role": "system",
+            "content": "You are an expert educational content creator. Always respond with valid JSON only."
+        },
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ]
+)
+
+response_text = response.output_text
         cleaned_response = clean_json_response(response_text)
         
         try:
