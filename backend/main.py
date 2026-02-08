@@ -10,7 +10,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -203,11 +203,20 @@ async def generate_study_material(request: GenerationRequest):
         prompt = STUDY_GENERATION_PROMPT.format(topic=topic)
         
        # Call OpenAI API
+import openai
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "You are an expert educational content creator. Always respond with valid JSON only."},
-        {"role": "user", "content": prompt}
+        {
+            "role": "system",
+            "content": "You are an expert educational content creator. Always respond with valid JSON only."
+        },
+        {
+            "role": "user",
+            "content": prompt
+        }
     ],
     temperature=0.7,
     max_tokens=2000
